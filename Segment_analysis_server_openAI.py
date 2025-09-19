@@ -134,4 +134,4 @@ async def review_analyzer_tool(request: ReviewRequest) -> dict:
     
 
 # To run this server, from your terminal:
-# uvicorn llm_server_chain_method_openAI:app --reload
+# uvicorn Segment_analysis_server_openAI:app --reload
