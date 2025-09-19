@@ -24,26 +24,6 @@ load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
     raise EnvironmentError("Missing OPENAI_API_KEY environment variable.")
 
-# Model initialization : 
-try:
-    llm = init_chat_model("gpt-4", 
-                        model_provider="openai",temperature=0.7,
-                        max_tokens=512,
-                        top_p=0.95,
-                        )
-except ValueError as e:
-    print(f"ValueError during model init: {e}")
-    llm = None
-    error_message = "Invalid parameters for model initialization."
-
-except ConnectionError as e:
-    print(f"ConnectionError: {e}")
-    llm = None
-    error_message = "Failed to connect to model provider."
-    
-if llm is None:
-    raise RuntimeError(f"Model initialization failed: {error_message}")
-
 app = FastAPI()
 
 # Define the set of possible app components
@@ -71,7 +51,29 @@ async def review_analyzer_tool(request: ReviewRequest) -> dict:
     'segment': 'Privacy/Security'}
 
     """
+
+    # Model initialization : 
+    try:
+        llm = init_chat_model("gpt-4", 
+                            model_provider="openai",temperature=0.7,
+                            max_tokens=512,
+                            top_p=0.95,
+                            )
+    except ValueError as e:
+        print(f"ValueError during model init: {e}")
+        llm = None
+        error_message = "Invalid parameters for model initialization."
+
+    except ConnectionError as e:
+        print(f"ConnectionError: {e}")
+        llm = None
+        error_message = "Failed to connect to model provider."
+
+    if llm is None:
+        raise RuntimeError(f"Model initialization failed: {error_message}")
+    
     parser = JsonOutputParser(pydantic_object=reviews)
+    
     # Prompt Creation.
     chat_prompt = ChatPromptTemplate.from_messages([
                     SystemMessagePromptTemplate.from_template(
@@ -134,4 +136,4 @@ async def review_analyzer_tool(request: ReviewRequest) -> dict:
     
 
 # To run this server, from your terminal:
-# uvicorn llm_server_chain_method_openAI:app --reload
+# uvicorn Segment_analysis_server_openAI:app --reload

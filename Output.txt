@@ -1,0 +1,22 @@
+review1 = "The service was excellent and the staff were very friendly."
+
+review2 = "The food was terrible and it took forever to arrive."
+
+review3 = "As someone with a chronic illness, remembering to take my meds and track my symptoms can be overwhelming. This app has been a lifesaver. The reminders are reliable, and logging my data is simple. It's great to have all my health info in one place, and my doctor loves that she can see my progress in real time. It is given me so much peace of mind."
+
+review4 = "The meditation sessions are excellent, and the sleep tracking is pretty accurate. However, the app feels a bit dated. Navigating between different sections isn't as smooth as it should be, and sometimes my data from my wearable doesn't sync properly, which is frustrating. It gets the job done, but it could be much better."
+
+review5 = "I downloaded this app to track my calories, but quickly uninstalled it. The free version bombards you with pop-up ads every two minutes. Worst of all, the privacy policy is incredibly vague, and I was uncomfortable with the amount of personal data it was collecting. I felt like my health information wasn't safe. A truly terrible experience"
+
+
+Analyzing review 1
+{'summary': 'The reviewer is pleased with the excellent service and friendly staff.', 'sentiment': 'Positive', 'segment': 'Customer Support'}
+Analyzing review 2
+{'summary': 'The user is unhappy with the long delivery time and poor quality of the food.', 'sentiment': 'Negative', 'segment': 'Other'}
+Analyzing review 3
+{'summary': 'The user finds the app extremely helpful in managing their chronic illness. The reminders for medication and symptom tracking are reliable and easy to use. The user appreciates having all their health information in one place and the ability for their doctor to monitor their progress in real time.', 'sentiment': 'Positive', 'segment': 'Features'}
+Analyzing review 4
+{'summary': "The user appreciates the meditation sessions and sleep tracking feature but finds the app's design outdated and navigation cumbersome. They also experience issues with data syncing from their wearable device.", 'sentiment': 'Neutral', 'segment': 'UI/UX'}
+Analyzing review 5
+{'summary': 'The reviewer uninstalled the app due to frequent pop-up ads in the free version and vague privacy policy, resulting in discomfort with the amount of personal data collected.', 'sentiment': 'Negative', 'segment': 'Privacy/Security'}
+
