@@ -29,22 +29,22 @@ if __name__ == "__main__":
 
     review5 = "I downloaded this app to track my calories, but quickly uninstalled it. The free version bombards you with pop-up ads every two minutes. Worst of all, the privacy policy is incredibly vague, and I was uncomfortable with the amount of personal data it was collecting. I felt like my health information wasn't safe. A truly terrible experience"
 
-    print("Analyzing review 1...")
+    print("Analyzing review 1")
     result1 = analyze_review_with_api(review1)
     print(result1)
 
-    print("\nAnalyzing review 2...")
+    print("\nAnalyzing review 2")
     result2 = analyze_review_with_api(review2)
     print(result2)
 
-    print("Analyzing review 3...")
+    print("Analyzing review 3")
     result3 = analyze_review_with_api(review3)
     print(result3)
 
-    print("Analyzing review 4...")
+    print("Analyzing review 4")
     result4 = analyze_review_with_api(review4)
     print(result4)
 
-    print("Analyzing review 5...")
+    print("Analyzing review 5")
     result5 = analyze_review_with_api(review5)
     print(result5)
