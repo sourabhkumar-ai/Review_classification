@@ -55,46 +55,61 @@ if __name__ == "__main__":
 
     segment_analysis_obj = Segment_Analysis()
     chat_prompt = segment_analysis_obj.Prompt_Generator()
+    Cummulative_chat_prompt = segment_analysis_obj.Cumm_Prompt_Generator()
 
     def chunk_list_dynamic(data, num_chunks=10):
         """Split data into `num_chunks` nearly equal parts."""
         chunk_size = max(1, len(data) // num_chunks)
         for i in range(0, len(data), chunk_size):
             yield data[i:i + chunk_size]
-
-    chunks = list(chunk_list_dynamic(rev_list, num_chunks=2))
+            
+    def number_of_chunks():
+        n = len(rev_list)
+        chunk_number = n//50
+        return chunk_number
+    
+    chunks = list(chunk_list_dynamic(rev_list, num_chunks=number_of_chunks()))
     result_list = []
     counter = 0
 
     #Below Method is to process chunks Parallely:
     start = time.perf_counter()
-    result = segment_analysis_obj.Cummulative_analysis_Generator_parallel(chunks,chat_prompt)
-    with open("analysis_output_parallel_request_2.txt", "w", encoding="utf-8") as f:
+    output = segment_analysis_obj.Cummulative_analysis_Generator_parallel(chunks,chat_prompt,Cummulative_chat_prompt)
+    if output is None:
+        result, final_summary = {}, {}
+    else:
+        result, final_summary = output
+    
+    with open("analysis_output_final_summary.txt", "w", encoding="utf-8") as f:
         f.write(json.dumps(result, indent=4, ensure_ascii=False))
+        f.write("\n\n=== Final Summary ===\n")
+        f.write(json.dumps(final_summary, indent=4, ensure_ascii=False))
+
     end = time.perf_counter()
     time_consumed = end-start
     print(f"Time Consumed = {time_consumed}")
+    print(final_summary)
 
 
 
     # Below method is to process chunks sequentially:
-    start = time.perf_counter()
-    for chunk in chunks:
-        print(f"Analysing..........................................................................{counter}")
-        result = segment_analysis_obj.Cummulative_analysis_Generator_sequential(chunks,chat_prompt)
-        result_list.append(result)
-        counter+=1
-        with open("analysis_output_chunk_by_chunk.txt", "w", encoding="utf-8") as f:
-            f.write(json.dumps(result, indent=4, ensure_ascii=False))
-    end = time.perf_counter()
-    time_consumed = end-start
-    print(f"Time Consumed = {time_consumed}")
+    # start = time.perf_counter()
+    # for chunk in chunks:
+    #     print(f"Analysing..........................................................................{counter}")
+    #     result = segment_analysis_obj.Cummulative_analysis_Generator_sequential(chunks,chat_prompt)
+    #     result_list.append(result)
+    #     counter+=1
+    #     with open("analysis_output_chunk_by_chunk.txt", "w", encoding="utf-8") as f:
+    #         f.write(json.dumps(result, indent=4, ensure_ascii=False))
+    # end = time.perf_counter()
+    # time_consumed = end-start
+    # print(f"Time Consumed = {time_consumed}")
 
 
 '''
 To be done:
 chunk number should be decided dynamically
-pick each summary for every chunk and process it for a cummulative summary of reach chunk.
+pick each summary for every chunk and process it for a cummulative summary of reach chunk. Done 
 
 '''
 

@@ -109,7 +109,30 @@ class Segment_Analysis:
             ),
             HumanMessagePromptTemplate.from_template("{reviews}")
         ])
-    
+    def Cumm_Prompt_Generator(self):
+        return ChatPromptTemplate.from_messages([
+            SystemMessagePromptTemplate.from_template(
+                """
+                You are an assistant analyzing app reviews. 
+                Chunk based reviews summary is provided .
+
+                Your task:
+                1. Provide a comprehensive analysis with two headings:
+                   - "summary": A holistic overview of the feedback.
+                   - "key_insights": Bullet-pointed insights highlighting patterns and important observations.
+
+                IMPORTANT:
+                    - Output must be **valid JSON only**.
+                    - Do not include explanations, markdown, code fences, or text outside the JSON object.
+                    - The JSON object must strictly match this schema:
+                {{
+                  "Final_summary": "<overall summary>",
+                  "Final_key_insights": ["point1", "point2"]
+                }}
+                """
+            ),
+            HumanMessagePromptTemplate.from_template("{summaries}")
+        ])
     def Sentiment_and_Segment_Generator(self, request, chat_prompt):
         parser = JsonOutputParser(pydantic_object=Reviews)
 
@@ -157,40 +180,33 @@ class Segment_Analysis:
                 print(f"Unexpected Error: {trace}")
                 return {"error": "Unexpected error", "details": str(e)}
             
-    
-    def Cummulative_analysis_Generator_parallel(self, chunks,chat_prompt):
+    def Cummulative_analysis_Generator_parallel(self, chunks,chat_prompt,Cummaltive_chain_prompt):
         parser = JsonOutputParser(pydantic_object=ComprehensiveSummary)
+        Cummulative_summary = []
+        results,final_summary = {},{}
         # Chain building.
         llm = self.llm 
         chain = chat_prompt | llm | parser
-        
+        Cummaltive_summary_chain = Cummaltive_chain_prompt | llm | parser
+        if not chunks:
+            return {}, {"summary": "", "key_insights": []} 
         try:
             
             if isinstance(chunks, list):
                 results=[]
-                #performing parallel operation on each single dict obj in request
-
-                # print(parallel_tasks)
-                # print(chunks[0])
-                # parallel_runner = RunnableParallel({
-                #     f"chunk_{i+1}": chain.bind(reviews=chunk)
-                #     for i, chunk in enumerate(chunks, start=1)
-                # })
-
                 parallel_runner = RunnableParallel({
                     f"chunk_{i+1}": RunnableLambda(lambda _: {"reviews": chunk}) | chain
                     for i, chunk in enumerate(chunks, start=1)
                 })
-                # results = parallel_runner.invoke({
-                #     f"chunk_{i+1}": {"reviews": chunk}
-                #     for i, chunk in enumerate(chunks, start=1)
-                # })
-                # print(parallel_runner.input_schema)
-                # Build the right input mapping
-                # inputs = {f"chunk_{i+1}": {"reviews": chunks[i]} for i in range(len(chunks))}
-                # print(inputs["chunk_1"]['reviews'])
                 results = parallel_runner.invoke({})
-                return results
+                for res in results.values():
+                    Cummulative_summary.append(res["summary"])
+                
+                final_summary = Cummaltive_summary_chain.invoke({
+                    "summaries": "\n".join(Cummulative_summary)
+                })
+                
+                return results,final_summary
 
         
         except AttributeError as e:
